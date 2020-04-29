@@ -18,7 +18,7 @@ There's a draft of this idea already at <https://ripa-2018-db.herokuapp.com>.
 However, this still takes too long to work. Heroku apps timeout after 30 seconds so if a query takes longer than that it will error out. A simple query aggregating number of people of each race/ethnicity by agency takes between 28 and 31 seconds so it sometimes errors out and others it doesn't. 
 
 TODO:
-- Create "smaller" `unique_id` that could potentially save memory. Right now `UNIQUE_INDEX` is a 22 character string. Potentially, all we need is a seven digit numeric id. 
+- Create "smaller" `unique_id` that could potentially save memory. Right now `UNIQUE_INDEX` is a 22 character string. Potentially, all we need is a seven digit numeric id. - DONE
 - Automate deployment:
   - Ideally, as the project evolves we can include useful table views and queries (included in the metadata). However, datasette doesn't allow you to "update" a deployment's metadata, one must deploy the app altogether. 
     This means that even thought the underlying SQLite database might be created/transformed very few times, it must be included in each deployment which is a heavy process. As of now, the database is 1.1 gb.  
