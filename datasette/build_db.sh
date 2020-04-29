@@ -1,0 +1,1 @@
+csvs-to-sqlite ./broken-down-db/*.csv "Appendix B Table 3.csv" ripa2018-db.db

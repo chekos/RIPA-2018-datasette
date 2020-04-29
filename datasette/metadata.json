@@ -1,0 +1,22 @@
+{
+    "title": "RIPA Stop Data (2018)",
+    "description_html": "<b>Assembly Bill 953</b> requires each state and local agency in California that employs peace officers to annually report to the Attorney General data on all stops, as defined in <b>Government Code 12525.5(g)(2)</b>, conducted by the agency's peace officers. The bill requires the collected data to include specified information, including the time, identity, date and location of the stop, and the reason for the stop. The current dataset (RIPA Stop Data.csv)  is composed of data collected by the eight largest agencies in the state between July and December of 2018. README PDF can be found <a href='https://data-openjustice.doj.ca.gov/sites/default/files/dataset/2020-01/RIPA%20Dataset%20Read%20Me%2020200106.pdf'>here</a>",
+    "license": "ODbL",
+    "license_url": "https://opendatacommons.org/licenses/odbl/",
+    "source": "Open Justice",
+    "source_url": "https://openjustice.doj.ca.gov/data",
+    "databases": {
+        "ripa2018-db": {
+          "tables": {
+            "base": {
+              "facets": ["AGENCY_NAME"]
+            }
+          },
+          "queries": {
+            "race_ethnicity_by_agency": {
+                "sql": "SELECT b.AGENCY_NAME as agency_name, SUM(RAE_BLACK_AFRICAN_AMERICAN) as n_black, SUM(RAE_HISPANIC_LATINO) as n_latinx, SUM(RAE_ASIAN) as n_asian, SUM(RAE_WHITE) as n_white FROM race_ethnicity as racen INNER JOIN base as b ON b.UNIQUE_INDEX = racen.UNIQUE_INDEX GROUP BY agency_name"
+            }
+          }
+        }
+      }
+}
