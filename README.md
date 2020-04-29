@@ -32,10 +32,7 @@ TODO:
 ├── LICENSE
 ├── README.md
 ├── .binder
-│   ├── postBuild         <- Commands to run after image is built
-│   ├── environment.yml   <- Python dependencies.
-│   ├── install.R         <- R dependencies.
-│   └── run_datassete.py  <- Runs datasette on mybinder.org
+├── datasette             <- All scripts related to building and deploying 
 ├── data
 │   ├── external          <- Data from third party sources.
 │   ├── interim           <- Intermediate data that has been transformed.
