@@ -1,1 +1,1 @@
-datasette publish heroku ripa2018-db.db --name ripa-2018-db --install datasette-vega -m metadata.json --static static:static/ --extra-options="--config default_page_size:50 --config sql_time_limit_ms:90000"
+datasette publish heroku ./ripa-2018-db.db --name ripa-2018-db --install datasette-vega -m ./metadata.json --static static:./static/ --extra-options="--config default_page_size:50 --config sql_time_limit_ms:90000"

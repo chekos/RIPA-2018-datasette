@@ -1,1 +1,1 @@
-csvs-to-sqlite ./../data/processed/*.csv "./../data/external/Appendix B Table 3.csv" ripa2018-db.db
+csvs-to-sqlite ./../data/processed/*.csv "./../data/external/Appendix B Table 3.csv" ./ripa-2018-db.db
