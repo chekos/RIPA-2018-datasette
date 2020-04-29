@@ -9,6 +9,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+    - name: Install dependencies
+      run: |
+        cd .binder
+        python -m pip install -r deployment-requirements.txt
     - name: Run helper scripts to process CSVs
       run: sh datasette/process_csvs.sh
     - name: Build SQLite database
