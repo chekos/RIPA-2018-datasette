@@ -78,7 +78,7 @@ type_of_property_seized_df.set_index("UNIQUE_ID", inplace = True)
 result_of_stop_df .set_index("UNIQUE_ID", inplace = True)
 
 print("Saving datasets...")
-base.to_csv(PROCESSED_DATA / "base.csv", encoding='utf-8')
+base.to_csv(PROCESSED_DATA / "aa_main_table.csv", encoding='utf-8')
 race_ethinicity_df.to_csv(PROCESSED_DATA / "race_ethnicity.csv", encoding='utf-8')
 gender_df.to_csv(PROCESSED_DATA / "gender.csv", encoding='utf-8')
 disability_df.to_csv(PROCESSED_DATA / "disability.csv", encoding='utf-8')
