@@ -23,3 +23,31 @@ TODO:
   - Ideally, as the project evolves we can include useful table views and queries (included in the metadata). However, datasette doesn't allow you to "update" a deployment's metadata, one must deploy the app altogether. 
     This means that even thought the underlying SQLite database might be created/transformed very few times, it must be included in each deployment which is a heavy process. As of now, the database is 1.1 gb.  
 - Organize project accordingly. Usually, I would have used [cookiecutter-data-project](https://github.com/chekos/cookiecutter-data-project). This is not a data analysis project exactly, it is more of a "deploying data" project that has some data analysis project similarities. We can still borrow some of the structrue of `cookiecutter-data-project` for this though.
+
+## Project Organization
+
+```
+.
+├── AUTHORS.md
+├── LICENSE
+├── README.md
+├── .binder
+│   ├── postBuild         <- Commands to run after image is built
+│   ├── environment.yml   <- Python dependencies.
+│   ├── install.R         <- R dependencies.
+│   └── run_datassete.py  <- Runs datasette on mybinder.org
+├── data
+│   ├── external          <- Data from third party sources.
+│   ├── interim           <- Intermediate data that has been transformed.
+│   ├── processed         <- The final, canonical data sets for modeling.
+│   └── raw               <- The original, immutable data dump.
+├── docs                  <- Documentation, e.g., doxygen or scientific papers (not tracked by git)
+├── notebooks             <- Jupyter/Rmarkdown notebooks
+├── static                <- Static assets (favicon, custom css, etc)
+└── src                   <- Source code for this project
+    ├── apps              <- scripts for apps (flask, streamlit)
+    ├── data              <- scripts and programs to process data
+    ├── tools             <- Any helper scripts go here
+    └── visualization     <- Scripts for visualisation of your results, e.g., matplotlib, ggplot2 related.
+
+```
