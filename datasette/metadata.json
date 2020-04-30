@@ -6,9 +6,9 @@
     "source": "Open Justice",
     "source_url": "https://openjustice.doj.ca.gov/data",
     "databases": {
-        "ripa2018-db": {
+        "ripa-2018-db": {
           "tables": {
-            "base": {
+            "aa_main_table": {
               "facets": ["AGENCY_NAME"]
             }
           },
