@@ -14,7 +14,7 @@
           },
           "queries": {
             "race_ethnicity_by_agency": {
-                "sql": "SELECT b.AGENCY_NAME as agency_name, SUM(RAE_BLACK_AFRICAN_AMERICAN) as n_black, SUM(RAE_HISPANIC_LATINO) as n_latinx, SUM(RAE_ASIAN) as n_asian, SUM(RAE_WHITE) as n_white FROM race_ethnicity as racen INNER JOIN base as b ON b.UNIQUE_INDEX = racen.UNIQUE_INDEX GROUP BY agency_name"
+                "sql": "SELECT b.AGENCY_NAME as agency_name, SUM(RAE_BLACK_AFRICAN_AMERICAN) as n_black, SUM(RAE_HISPANIC_LATINO) as n_latinx, SUM(RAE_ASIAN) as n_asian, SUM(RAE_WHITE) as n_white FROM race_ethnicity as racen INNER JOIN aa_main_table as b ON b.UNIQUE_ID = racen.UNIQUE_ID GROUP BY agency_name"
             }
           }
         }
