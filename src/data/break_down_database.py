@@ -88,4 +88,4 @@ basis_for_search_df.to_csv(PROCESSED_DATA / "basis_for_search.csv", encoding='ut
 contraband_evidence_discovered_df.to_csv(PROCESSED_DATA / "contraband_evidence_discovered.csv", encoding='utf-8')
 basis_for_property_seizure_df.to_csv(PROCESSED_DATA / "basis_for_property_seizure.csv", encoding='utf-8')
 type_of_property_seized_df.to_csv(PROCESSED_DATA / "type_of_property_seized.csv", encoding='utf-8')
-result_of_stop_df.to_csv(PROCESSED_DATA / "resulf_of_stop.csv", encoding='utf-8')
+result_of_stop_df.to_csv(PROCESSED_DATA / "result_of_stop.csv", encoding='utf-8')
