@@ -17,6 +17,11 @@
                 "sql": "SELECT b.AGENCY_NAME as agency_name, SUM(RAE_BLACK_AFRICAN_AMERICAN) as n_black, SUM(RAE_HISPANIC_LATINO) as n_latinx, SUM(RAE_ASIAN) as n_asian, SUM(RAE_WHITE) as n_white FROM race_ethnicity as racen INNER JOIN aa_main_table as b ON b.UNIQUE_ID = racen.UNIQUE_ID GROUP BY agency_name",
                 "title": "Race / Ethnicity by Agency Name",
                 "description_html": "Stops by race/ethnicity by agency."
+            },
+            "race_ethnicity_by_reason_for_stop": {
+                "sql": "SELECT REASON_FOR_STOP, COUNT(REASON_FOR_STOP) as total_stops, SUM(RAE_BLACK_AFRICAN_AMERICAN) as n_black, SUM(RAE_HISPANIC_LATINO) as n_latinx,SUM(RAE_ASIAN) as n_asian,SUM(RAE_WHITE) as n_white, PRINTF('%.2f', SUM(RAE_BLACK_AFRICAN_AMERICAN)*1.0 / COUNT(REASON_FOR_STOP)) as share_black, PRINTF('%.2f', SUM(RAE_HISPANIC_LATINO)*1.0 / COUNT(REASON_FOR_STOP)) as share_latinx, PRINTF('%.2f', SUM(RAE_ASIAN)*1.0 / COUNT(REASON_FOR_STOP)) as share_asian, PRINTF('%.2f', SUM(RAE_WHITE)*1.0 / COUNT(REASON_FOR_STOP)) as share_white FROM aa_main_table as main INNER JOIN race_ethnicity as rae ON rae.UNIQUE_ID = main.UNIQUE_ID GROUP BY REASON_FOR_STOP",
+                "title": "Race / Ethnicity by Reason for Stop",
+                "description_html": "<table><thead><tr><th>Code</th><th>Definition</th></tr></thead><tbody><tr><td>1</td><td>Traffic Violation</td></tr><tr><td>2</td><td>Reasonable suspicion</td></tr><tr><td>3</td><td>Parole/probation/PRCS/mandatory supervision</td></tr><tr><td>4</td><td>Knowledge of outstanding arrest warrant/wanted person</td></tr><tr><td>5</td><td>Investigation to determine whether person was truant</td></tr><tr><td>6</td><td>Consensual encounter resulting in search</td></tr><tr><td>7</td><td>Possible conduct under Education Code</td></tr><tr><td>8</td><td>Determine whether student violated school policy</td></tr></tbody></table>"
             }
           }
         }
