@@ -1,0 +1,1 @@
+sh datasette/process_csvs.sh
