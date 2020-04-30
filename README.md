@@ -21,7 +21,7 @@ TODO:
 - Create "smaller" `unique_id` that could potentially save memory. Right now `UNIQUE_INDEX` is a 22 character string. Potentially, all we need is a seven digit numeric id. - DONE
 - Automate deployment:
   - Ideally, as the project evolves we can include useful table views and queries (included in the metadata). However, datasette doesn't allow you to "update" a deployment's metadata, one must deploy the app altogether. 
-    This means that even thought the underlying SQLite database might be created/transformed very few times, it must be included in each deployment which is a heavy process. As of now, the database is 1.1 gb.  
+    This means that even thought the underlying SQLite database might be created/transformed very few times, it must be included in each deployment which is a heavy process. As of now, the database is 1.1 gb. - DONE
 - Organize project accordingly. Usually, I would have used [cookiecutter-data-project](https://github.com/chekos/cookiecutter-data-project). This is not a data analysis project exactly, it is more of a "deploying data" project that has some data analysis project similarities. We can still borrow some of the structrue of `cookiecutter-data-project` for this though. - DONE
 
 ## Project Organization
