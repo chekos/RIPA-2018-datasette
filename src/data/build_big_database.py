@@ -14,4 +14,4 @@ for csv in INTERIM_DATA.glob("*-part-*.csv"):
 
 big_dataset = pd.concat(datasets, ignore_index=True)
 print("Saving dataset...")
-big_dataset.to_csv(INTERIM_DATA.joinpath(FULL_DB))
+big_dataset.to_csv(INTERIM_DATA.joinpath(FULL_DB), index = False)
