@@ -98,3 +98,8 @@ The "broken down" dataset can be found at <http://ripa-2018-db.herokuapp.com>.
     └── visualization     <- Scripts for visualisation of your results, e.g., matplotlib, ggplot2 related.
 
 ```
+
+### How to contribute
+
+* Suggested Queries
+* Suggested supplemental tables
