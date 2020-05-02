@@ -3,6 +3,9 @@ name: Build and Deploy Datasette to Heroku
 on:
   push:
     branches: [ master ]
+    paths:
+      - "data/**"
+      - "datasette/**"
 
 jobs:
   build:
