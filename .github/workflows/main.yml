@@ -24,7 +24,7 @@ jobs:
       run: sh datasette/process_csvs.sh
     - name: Build SQLite database
       run: sh datasette/build_db.sh
-    - name: Add canned queries to metadata
+    - name: Add canned queries and tables info to metadata
       run: |
         python src/tools/add_metadata.py
     - name: Login to Heroku
