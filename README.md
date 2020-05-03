@@ -42,6 +42,7 @@ The goal of this project is to deploy a `datasette` instance serving this data s
 | Data can be found on the California's DOJ Open Data website | https://openjustice.doj.ca.gov/data |
 | Direct link to data (641.4 MB)                              | https://data-openjustice.doj.ca.gov/sites/default/files/dataset/2020-01/RIPA%20Stop%20Data%202018.csv |
 | Data README                                                 | https://data-openjustice.doj.ca.gov/sites/default/files/dataset/2020-01/RIPA%20Dataset%20Read%20Me%2020200106.pdf |
+| 2020 RIPA Board Annual Report                               | https://oag.ca.gov/sites/all/files/agweb/pdfs/ripa/ripa-board-report-2020.pdf |
 
 The data being served on this project was downloaded from the [Open Justice website](https://openjustice.doj.ca.gov/data) on April 27th, 2020 at 7:30 AM.
 
