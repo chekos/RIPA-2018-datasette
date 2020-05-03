@@ -26,9 +26,17 @@ with open(DATASETTE_DIR / "metadata.json", "r") as file:
 with open(DATASETTE_DIR / "queries.yaml", "r") as file:
     queries = parse_metadata(file.read())
 
+with open(DATASETTE_DIR / "tables.yaml", "r") as file:
+    tables = parse_metadata(file.read())
+
 metadata['databases']['ripa-2018-db']['queries'] = {}
 for query in queries.keys():
     metadata['databases']['ripa-2018-db']['queries'][query] = queries[query]
+
+metadata['databases']['ripa-2018-db']['tables'] = {}
+for table in tables.keys():
+    metadata['databases']['ripa-2018-db']['tables'][table] = tables[table]
+
 
 with open(DATASETTE_DIR / "updated_metadata.json", "w") as file:
     file.write(json.dumps(metadata, indent=4),)
