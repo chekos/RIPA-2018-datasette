@@ -11,7 +11,17 @@ report-findings-bullet-3:
   description_html: "<b>95.3 percent of stops were officer-initiated</b>, while 4.7 percent of stops were in response to a call for service, radio call, or dispatch."
 
 race-ethnicity-by-agency:
-  sql: "SELECT b.AGENCY_NAME as agency_name, SUM(RAE_BLACK_AFRICAN_AMERICAN) as n_black, SUM(RAE_HISPANIC_LATINO) as n_latinx, SUM(RAE_ASIAN) as n_asian, SUM(RAE_WHITE) as n_white FROM race_ethnicity as racen INNER JOIN aa_main_table as b ON b.UNIQUE_ID = racen.UNIQUE_ID GROUP BY agency_name"
+  sql: SELECT
+        b.AGENCY_NAME as agency_name,
+        rae_codes.RACE_ETHNICITY as race_ethnicity,
+        COUNT(rae.RAE_FULL) as N
+      FROM
+        race_ethnicity as rae
+      INNER JOIN aa_main_table as b ON b.UNIQUE_ID = rae.UNIQUE_ID
+      INNER JOIN race_ethnicity_codes as rae_codes ON rae.RAE_FULL = rae_codes.CODE
+      GROUP BY
+        agency_name,
+        rae.RAE_FULL
   title: "Race / Ethnicity by Agency Name"
   description_html: "Stops by race/ethnicity by agency."
 
