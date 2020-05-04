@@ -3,7 +3,7 @@
 <head>
     <title>{% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="{{ base_url }}-/static/app.css?{{ app_css_hash }}">
-    <link rel="shortcut icon" type="image/x-icon" href="{{ base_url }}-/static/favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="https://raw.githubusercontent.com/chekos/RIPA-2018-datasette/master/datasette/static/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 {% for url in extra_css_urls %}
     <link rel="stylesheet" href="{{ url.url }}"{% if url.sri %} integrity="{{ url.sri }}" crossorigin="anonymous"{% endif %}>
