@@ -1,3 +1,15 @@
+report-findings-bullet-3:
+  sql: SELECT
+        CALL_FOR_SERVICE as call_for_service,
+        COUNT(*) as N,
+        PRINTF('%.4f', COUNT(*) * 1.0 / (SELECT COUNT(*) FROM aa_main_table)) as share
+      FROM
+        aa_main_table
+      GROUP BY
+        CALL_FOR_SERVICE
+  title: "(2020 annual report) Findings regarding RIPA Stop Data Bullet Point 3"
+  description_html: "<b>95.3 percent of stops were officer-initiated</b>, while 4.7 percent of stops were in response to a call for service, radio call, or dispatch."
+
 race-ethnicity-by-agency:
   sql: "SELECT b.AGENCY_NAME as agency_name, SUM(RAE_BLACK_AFRICAN_AMERICAN) as n_black, SUM(RAE_HISPANIC_LATINO) as n_latinx, SUM(RAE_ASIAN) as n_asian, SUM(RAE_WHITE) as n_white FROM race_ethnicity as racen INNER JOIN aa_main_table as b ON b.UNIQUE_ID = racen.UNIQUE_ID GROUP BY agency_name"
   title: "Race / Ethnicity by Agency Name"
