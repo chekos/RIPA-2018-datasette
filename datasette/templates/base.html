@@ -12,6 +12,21 @@
     <script src="{{ url.url }}"{% if url.sri %} integrity="{{ url.sri }}" crossorigin="anonymous"{% endif %}></script>
 {% endfor %}
 {% block extra_head %}{% endblock %}
+    <!-- Begin Jekyll SEO tag v2.6.1 -->
+    <meta name="generator" content="Jekyll v3.8.5" />
+    <meta property="og:title" content="{% block title %}{% endblock %}" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="description" content="RIPA 2018 datasette." />
+    <meta property="og:description" content="RIPA 2018 datasette." />
+    <link rel="canonical" href="https://ripa-2018.datasettes.cimarron.io/" />
+    <meta property="og:url" content="https://ripa-2018.datasettes.cimarron.io/" />
+    <meta property="og:site_name" content="{% block title %}{% endblock %}" />
+    <meta name="twitter:card" content="summary" />
+    <meta property="twitter:title" content="{% block title %}{% endblock %}" />
+    <meta name="twitter:site" content="@ChekosWH" />
+    <script type="application/ld+json">
+    {"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://ripa-2018.datasettes.cimarron.io/assets/img/avatar.png"}},"@type":"WebSite","headline":"{% block title %}{% endblock %}","url":"https://ripa-2018.datasettes.cimarron.io/","name":"{% block title %}{% endblock %}","description":"RIPA 2018 datasette.","@context":"https://schema.org"}</script>
+    <!-- End Jekyll SEO tag -->
 </head>
 <body class="{% block body_class %}{% endblock %}">
 
