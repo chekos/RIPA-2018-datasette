@@ -43,17 +43,27 @@ race-ethnicity-by-reason-for-stop:
   title: "Reason for Stop by Race / Ethnicity "
   description_html: "A higher percentage of Black individuals were stopped for reasonable suspicion than any other racial identity group."
 
-consensual-encounters-resulting-in-search-by-race-ethnicity:
-  sql: "SELECT AGENCY_NAME, COUNT(REASON_FOR_STOP) as total_stops, SUM(RAE_BLACK_AFRICAN_AMERICAN) as n_black, SUM(RAE_HISPANIC_LATINO) as n_latinx, SUM(RAE_ASIAN) as n_asian, SUM(RAE_WHITE) as n_white, PRINTF('%.2f', SUM(RAE_BLACK_AFRICAN_AMERICAN)*1.0 / COUNT(REASON_FOR_STOP)) as share_black, PRINTF('%.2f', SUM(RAE_HISPANIC_LATINO)*1.0 / COUNT(REASON_FOR_STOP)) as share_latinx, PRINTF('%.2f', SUM(RAE_ASIAN)*1.0 / COUNT(REASON_FOR_STOP)) as share_asian, PRINTF('%.2f', SUM(RAE_WHITE)*1.0 / COUNT(REASON_FOR_STOP)) as share_white FROM aa_main_table as main INNER JOIN race_ethnicity as rae ON rae.UNIQUE_ID = main.UNIQUE_ID WHERE REASON_FOR_STOP = 6 GROUP BY main.AGENCY_NAME"
-  title: "Consensual Encounters Resulting in Search by Race/Ethnicity"
-  description_html: "Consensual encounter resulting in search."
-
-consent-given-for-search-by-race-ethnicity:
-  sql: "SELECT main.AGENCY_NAME as agency_name, bfs.BFS_CONSENT_GIVEN as consent_given, COUNT(REASON_FOR_STOP) as total_stops, SUM(RAE_BLACK_AFRICAN_AMERICAN) as n_black, SUM(RAE_HISPANIC_LATINO) as n_latinx, SUM(RAE_ASIAN) as n_asian, SUM(RAE_WHITE) as n_white, PRINTF('%.2f', SUM(RAE_BLACK_AFRICAN_AMERICAN)*1.0 / COUNT(REASON_FOR_STOP)) as share_black, PRINTF('%.2f', SUM(RAE_HISPANIC_LATINO)*1.0 / COUNT(REASON_FOR_STOP)) as share_latinx, PRINTF('%.2f', SUM(RAE_ASIAN)*1.0 / COUNT(REASON_FOR_STOP)) as share_asian, PRINTF('%.2f', SUM(RAE_WHITE)*1.0 / COUNT(REASON_FOR_STOP)) as share_white FROM aa_main_table as main INNER JOIN race_ethnicity as rae ON rae.UNIQUE_ID = main.UNIQUE_ID INNER JOIN basis_for_search as bfs on bfs.UNIQUE_ID = rae.UNIQUE_ID GROUP BY main.AGENCY_NAME, bfs.BFS_CONSENT_GIVEN"
-  title: "Consensual Searches by Race/Ethnicity"
-  description_html: "Basis for search: consent given."
-
-consensual-encounters-resulting-in-consensual-search-by-race-ethnicity:
-  sql: "SELECT main.AGENCY_NAME as agency_name, bfs.BFS_CONSENT_GIVEN as consent_given, COUNT(REASON_FOR_STOP) as total_stops, SUM(RAE_BLACK_AFRICAN_AMERICAN) as n_black, SUM(RAE_HISPANIC_LATINO) as n_latinx, SUM(RAE_ASIAN) as n_asian, SUM(RAE_WHITE) as n_white, PRINTF('%.2f', SUM(RAE_BLACK_AFRICAN_AMERICAN)*1.0 / COUNT(REASON_FOR_STOP)) as share_black, PRINTF('%.2f', SUM(RAE_HISPANIC_LATINO)*1.0 / COUNT(REASON_FOR_STOP)) as share_latinx, PRINTF('%.2f', SUM(RAE_ASIAN)*1.0 / COUNT(REASON_FOR_STOP)) as share_asian, PRINTF('%.2f', SUM(RAE_WHITE)*1.0 / COUNT(REASON_FOR_STOP)) as share_white FROM aa_main_table as main INNER JOIN race_ethnicity as rae ON rae.UNIQUE_ID = main.UNIQUE_ID INNER JOIN basis_for_search as bfs on bfs.UNIQUE_ID = rae.UNIQUE_ID WHERE REASON_FOR_STOP = 6 GROUP BY main.AGENCY_NAME, bfs.BFS_CONSENT_GIVEN"
-  title: "Consensual Encounters Resulting in Consensual Search by Race/Ethnicity"
-  description_html: "Reason for stop: consensual encounter and basis for search: consent given by Race / Ethnicity."
+consent-by-race-ethnicity:
+  sql: SELECT
+        rae_codes.RACE_ETHNICITY as race_ethnicity,
+        SUM(ADS_ASKED_SEARCH_PER) as asked_person_for_consent,
+        SUM(ADS_SEARCH_PERS_CONSEN) as person_consented_to_search,
+        SUM(ADS_SEARCH_PERSON) as searched_person,
+      -- claimed basis for search is that consent was given
+        SUM(bfs.BFS_CONSENT_GIVEN) as bfs_consent_given,
+      -- claimed consentual encounter resulted in consentual search
+        SUM(main.REASON_FOR_STOP) as rfs_consentual_encounter_consentual_search
+      FROM
+        action_taken AS at
+      INNER JOIN 
+        race_ethnicity AS rae ON rae.UNIQUE_ID = at.UNIQUE_ID
+      INNER JOIN
+        basis_for_search AS bfs ON bfs.UNIQUE_ID = rae.UNIQUE_ID
+      INNER JOIN
+        race_ethnicity_codes AS rae_codes ON rae.RAE_FULL = rae_codes.CODE
+      LEFT JOIN
+        (SELECT UNIQUE_ID, REASON_FOR_STOP FROM aa_main_table WHERE REASON_FOR_STOP = 6) AS main ON main.UNIQUE_ID = rae.UNIQUE_ID
+      GROUP BY
+        rae.RAE_FULL
+  title: "Variables related to consent in searches"
+  description_html: " “According to RIPA stop data regulations: <br> <b>'Consensual search'</b> is a search that occurs when a person gives a peace officer consent or permission to search the person or the person’s property. Consent can be given in writing or verbally, or may be implied by conduct. <br> <b>Consensual encounter resulting in a search</b>: A consensual encounter is an interaction in which the officer does not exert any authority over, or use any force on, a person, and the person is free to leave. The officer shall only select this data value if a consensual encounter results in a search, regardless of whether the resulting search is consensual. "
