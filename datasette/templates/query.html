@@ -56,12 +56,10 @@
     <p>
         <button id="sql-format" type="button" hidden>Format SQL</button>
         <input type="submit" value="Run SQL">
+        <button type="button" class="btn btn-secondary btn-sm"><a href="{{ link_to_new_issue }}" target="_blank">Submit on <i class="fab fa-github"></i></a></button>
     </p>
-    <p>
-        <button type="button" class="btn btn-secondary btn-sm"><a href="{{ link_to_new_issue }}" target="_blank">Suggest this query on <i class="fab fa-github"></i></a></button>
-    </p>
-    <p>
-        <small>If you think this query provides useful or interesting information submit it as a suggestion to be included as a <i>canned query</i>. Canned queries are displayed in the main page and come with their own URL. Others might find your query useful in their work!</small>
+    <p class="text-muted">
+        <small>If you think this query provides useful or interesting information submit it as a suggestion to be included as a <i>canned query</i>! Canned queries are displayed in the main page and come with their own URL. Others might find your query useful in their work!</small>
     </p>
 </form>
 
