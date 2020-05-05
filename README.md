@@ -10,6 +10,7 @@
 - [About RIPA](#about-ripa)
 - [About the project](#about-the-project)
   - [About the data](#about-the-data)
+    - [Supplemental tables](#supplemental-tables)
   - [About datasette](#about-datasette)
   - [Project description](#project-description)
   - [Project organization](#project-organization)
@@ -51,7 +52,7 @@ Each stop instance has an attached `DOJ_RECORD_ID` and each person stopped is as
 
 This is too large to serve as one table. It is also unnecessarily cumbersome. There's a `datasette` instance serving it at <http://ripa-2018.herokuapp.com>.
 
-To familiarize yourself with the data more read the [README PDF](docs/RIPA_Dataset_Read_Me_20200106.pdf)
+To familiarize yourself with the data more read the [README PDF](docs/RIPA%20Dataset%20Read%20Me%2020200106.pdf)
 
 In order to make it more accessible the dataset was "broken down" into different tables. Columns related to one another had a shared prefix (gender variables start with `G_`, race/ethnicity variables start with `RAE_`) so we created tables with each group of prefixes. The code used to do this can be found on the [src/data/break_down_database.py](src/data/break_down_database.py) script. The tables are as follows:
 
@@ -71,9 +72,23 @@ In order to make it more accessible the dataset was "broken down" into different
 
 The "broken down" dataset can be found at <http://ripa-2018-db.herokuapp.com>.
 
+#### Supplemental tables
+
+In order to make this data more usable "out of the box" we're adding supplemental tables to the datasette instance. These tables should be small _-ish_ in comparison. Right now these include the codes and definitions for `RAE_FULL` (race/ethnicity), `G_FULL` (gender), `PD_FULL` (disability), `REASON_FOR_STOP`, and `AGE_GROUPS`. All these tables have the suffix `_codes` in their name. This information was extracted from the accompanying data [README file](docs/RIPA%20Dataset%20Read%20Me%2020200106.pdf). 
+
 ### About datasette
+from [datasette.readthedocs.io](https://datasette.readthedocs.io/)
+
+> _A tool for exploring and publishing data_ <br><br>
+> Datasette is a tool for exploring and publishing data. It helps people take data of any shape or size and publish that as an interactive, explorable website and accompanying API. <br><br>
+> Datasette is aimed at data journalists, museum curators, archivists, local governments and anyone else who has data that they wish to share with the world. It is part of a wider ecosystem of tools and plugins dedicated to making working with structured data as productive as possible.
+
+**datasette** is the engine powering this project. In short, it grabs a sqlite database and creates an _interactive, explorable website and accompanying API_. To prepare the data we also used `csvs-to-sqlite`, another tool from the datasette ecosystem which grabs CSV files and creates sqlite databases from them. 
+
 
 ### Project description
+
+
 
 ### Project Organization
 
@@ -83,7 +98,11 @@ The "broken down" dataset can be found at <http://ripa-2018-db.herokuapp.com>.
 ├── LICENSE
 ├── README.md
 ├── .binder
+├── .github               <- All things GitHub
+│   └── workflows         <- GitHub Actions
 ├── datasette             <- All scripts related to building and deploying
+│   ├── static            <- Static assets (favicon, custom css, etc)
+│   └── templates         <- Any templates to overwrite datasette's defaults.
 ├── data
 │   ├── external          <- Data from third party sources.
 │   ├── interim           <- Intermediate data that has been transformed.
@@ -91,7 +110,6 @@ The "broken down" dataset can be found at <http://ripa-2018-db.herokuapp.com>.
 │   └── raw               <- The original, immutable data dump.
 ├── docs                  <- Documentation, e.g., doxygen or scientific papers (not tracked by git)
 ├── notebooks             <- Jupyter/Rmarkdown notebooks
-├── static                <- Static assets (favicon, custom css, etc)
 └── src                   <- Source code for this project
     ├── apps              <- scripts for apps (flask, streamlit)
     ├── data              <- scripts and programs to process data
