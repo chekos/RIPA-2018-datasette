@@ -13,6 +13,10 @@
     - [Supplemental tables](#supplemental-tables)
   - [About datasette](#about-datasette)
   - [Project description](#project-description)
+    - [Acquiring the data](#acquiring-the-data)
+    - [Preparing the data](#preparing-the-data)
+    - [Serving the data](#serving-the-data)
+    - [Automating everything](#automating-everything)
   - [Project organization](#project-organization)
 - [How to contribute](#how-to-contribute)
 
@@ -38,21 +42,26 @@ The goal of this project is to deploy a `datasette` instance serving this data s
 
 ### About the data
 
+> _AB 953 tasked the Board with eliminating racial and identity profiling and improving diversity and racial and identity sensitivity in law enforcement by investigating and analyzing law enforcement policy and data. Data statutorily required to be collected by peace officers include both person-level (e.g. race/ethnicity) and stop-level (e.g. time of stop) information. Reporting agencies were required to begin collecting stop data in waves. Specifically, each agency that employs 1,000 or more peace officers issued its first round of reports on or before April 1, 2019; agencies that employ 667 or more but less than 1,000 peace officers shall issue its first round of reports on or before April 1, 2020; agencies that employ 334 or more but less than 667 peace officers shall issue its first round of reports on or before April 1, 2022 and, each agency that employs one or more, but less than 334 peace officers, shall issue its first round of reports on or before April 1, 2023._
+
 |                                                             |                                     |
 |:------------------------------------------------------------|:------------------------------------|
 | Data can be found on the California's DOJ Open Data website | https://openjustice.doj.ca.gov/data |
 | Direct link to data (641.4 MB)                              | https://data-openjustice.doj.ca.gov/sites/default/files/dataset/2020-01/RIPA%20Stop%20Data%202018.csv |
 | Data README                                                 | https://data-openjustice.doj.ca.gov/sites/default/files/dataset/2020-01/RIPA%20Dataset%20Read%20Me%2020200106.pdf |
 | 2020 RIPA Board Annual Report                               | https://oag.ca.gov/sites/all/files/agweb/pdfs/ripa/ripa-board-report-2020.pdf |
+| RIPA stop data regulations                                  | https://oag.ca.gov/sites/all/files/agweb/pdfs/ripa/stop-data-reg-final-text-110717.pdf |
 
 The data being served on this project was downloaded from the [Open Justice website](https://openjustice.doj.ca.gov/data) on April 27th, 2020 at 7:30 AM.
 
+| Those interested in using the data should read the accompanying README file and the stop data regulations (both are included in the docs folder) | 
+|:----------------------------------------------------------------------------------------------------------|
+
 The dataset is 1.8 million rows and 143 columns (around 650 MB). 
 Each stop instance has an attached `DOJ_RECORD_ID` and each person stopped is assigned a `PERSON_NUMBER`.
+It contains stops from the 8 largest law enforcement agencies (LEA) in California (those employing 1,000 or more peace officers - also known as Wave 1).  
 
 This is too large to serve as one table. It is also unnecessarily cumbersome. There's a `datasette` instance serving it at <http://ripa-2018.herokuapp.com>.
-
-To familiarize yourself with the data more read the [README PDF](docs/RIPA%20Dataset%20Read%20Me%2020200106.pdf)
 
 In order to make it more accessible the dataset was "broken down" into different tables. Columns related to one another had a shared prefix (gender variables start with `G_`, race/ethnicity variables start with `RAE_`) so we created tables with each group of prefixes. The code used to do this can be found on the [src/data/break_down_database.py](src/data/break_down_database.py) script. The tables are as follows:
 
@@ -88,7 +97,57 @@ from [datasette.readthedocs.io](https://datasette.readthedocs.io/)
 
 ### Project description
 
+To learn about the motivation for this project, you can read the _[About the project](#about-the-project)_ section. 
 
+This section is for a more technical description of the project. The data preparation and deployment of datasette is pretty straight-forward and it can be divided into three phases: 
+1. Aquiring the data
+2. Preparing the data
+3. Serving the data
+
+#### Acquiring the data
+The data was retrieved from the Open Justice website of the California Department of Justice: https://openjustice.doj.ca.gov/data. The website provides a link to download the data as of May 5th, 2020. To learn more about the data itself you can read the _[About the data](#about-the-data)_ section.
+
+#### Preparing the data
+The original CSV file is over 650 MB in size so the very first step was to _slice_ it into 15 CSV files so that each could be uploaded to GitHub with this repository. However, because the dataset is too large to serve as a single table (1.8 million rows by 143 columns) it was also _broken down_ into smaller tables. This means we took related variables (based on their suffixes) and extracted them into their own tables. For example, variables related to gender like `G_FULL`, `G_MALE`, `G_FEMALE`, `G_TRANSGENDER_MAN`, `G_TRANSGENDER_WOMAN`, `G_GENDER_NONCOMFORMING`, and `G_MULTIGENDER` were extracted from the "main" table and were added to a **gender** table in the database. These can be joined back to the main table using the **UNIQUE_ID** assigned to them. 
+
+Each observation or row of this dataset is assigned a `DOJ_RECORD_ID` and a `PERSON_NUMBER`. These are unique to the stop and the person(s) stopped respectively. This means we could combine them to create a UNIQUE_ID for each row which we could use to join tables together. However, this ends up being a 22 character string which is unnecessarily large. To facilitate things, each row is assigned a numeric id starting at 1,000,000. Starting at one million is completely arbitrary, we could have started at 0 but because there's 1.8 million rows we made the decision to have each numeric id be seven digits. This numeric `UNIQUE_ID` lets us join tables together **and** is not a big addition to the database in terms of memory.
+
+Once this `UNIQUE_ID` is created we can extract columns from the "main" table into their own tables and save those as individual CSV files. We then use `csvs-to-sqlite` to create a sqlite database where each CSV is a table. In this step, we also include the **Appendix B Table 3.csv** file obtained also from the DOJ's website and any other supplemental tables we might have created to accompany the dataset.
+
+#### Serving the data
+After preparing the data and creating the sqlite database we use **datasette** to serve it as an interactive website and API. This is as easy as running 
+
+```shell
+datasette ripa-2018.db
+```
+
+However, we customize our datasette instance a bit. 
+
+We include a title, description, data source URL, and some extra CSS and JS assets. You can explore [datasette/metadata.json](datasette/metadata.json) to find the specifics.
+
+We also include _canned queries_, queries included by default in our instance that are displayed in the main page and come with their own URL to facilitate access. These queries are included because they are useful or interesting facts found in the data. Some of them are queries that compute specific facts published in the 2020 Annual Report. 
+
+If you run into an interesting fact using this data please submit the query as a GitHub Issue and tag it as a `suggestion`. 
+
+We also modify some templates from datasette, specifically `base.html` and `query.html`. The first was modified to include some metadata in the `<head>` (website preview description and such). The second was modified to include a button below the SQL code box to submit the query a user just ran as a suggestion on GitHub to facilitate the sharing of these. 
+
+We also change some default options for datasette:
+1. `default_page_size:50`
+2. `sql_time_limit_ms:90000`
+3. `facet_time_limit_ms:10000`
+
+#### Automating everything
+To facilitate the updating of this database we automate the whole process using GitHub Actions. 
+
+In the `[src/data](src/data)` folder we include the python scripts that slice the original dataset into 15 pieces, rebuild the dataset to create the `UNIQUE_ID` variable and extract similar variables based on their suffixes and saved those as individual CSV files.
+
+In the `[src/tools](src/tools)` folder we include the script that reads in the canned queries ([queries.yaml](datasette/queries.yaml)) and adds them to the [metadata.json](datasette/metadata.json) file. 
+
+These scripts are orchestrated using shell scripts included in the [datasette](datasette/) folder. 
+
+After running these scripts we have a database ready to serve and the configurations we want for our datasette instance. We then deploy to heroku which we can do directly from datasette.
+
+You can follow each step our Action takes on the [main.yml](.github/workflows/main.yml) file. 
 
 ### Project Organization
 
@@ -120,5 +179,31 @@ from [datasette.readthedocs.io](https://datasette.readthedocs.io/)
 
 ### How to contribute
 
-* Suggested Queries
+* Suggested queries
+You can submit SQL queries as GitHub Issues (please tag them as `suggestions`) to be included as canned queries in future deployments. These canned queries are displayed in the main page and come with their individual URLs to facilitate sharing and use as APIs. At the moment, we're including all the queries necessary to recreate the facts published in the 2020 Annual Report. If you use find something intersting using this data, please submit your query so that others can use it in their work and build on it. 
+
 * Suggested supplemental tables
+There are many ways to enrich the data we already have. One example are the `_codes` tables. We extracted the code - definition tables from the README file and included them as tables in the sqlite database so that the data can be more useful "out of the box". For example, `RAE_FULL` comes with codes 1-8 for race/ethinicities. 
+
+|    Code   |       Race/Ethnicity       |
+|:----------|:---------------------------|
+|     1     |          Asian             |
+|     2     |  Black/African American    |
+|     3     |     Hispanic/Latino        |
+|     4     | Middle Eastern/South Asian |
+|     5     |     Native American        |
+|     6     |     Pacific Islander       |
+|     7     |          White             |
+|     8     |       Multiracial          |
+
+This is a tiny table of just 8 rows which can provide massive help for anyone working with the data.
+
+You can see it in use here: https://ripa-2018-db.datasettes.cimarron.io/ripa-2018-db/race-ethnicity-by-reason-for-stop
+
+If you have any ideas for other supplemental tables that we should include please open a GitHub Issue and let us know!
+
+* Optimizing datasette / sqlite
+If you know of some other ways we could optimize performance on our queries or on the database itself, please let us know. We're not SQL experts and it could help a lot of people.
+
+* Ideas, thoughts, tips, suggestions, complaints. 
+If you have any other idea or thought or question about this project please open up a GitHub Issue to start a conversation.
