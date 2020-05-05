@@ -49,9 +49,7 @@ consent-by-race-ethnicity:
         SUM(ADS_ASKED_SEARCH_PER) as asked_person_for_consent,
         SUM(ADS_SEARCH_PERS_CONSEN) as person_consented_to_search,
         SUM(ADS_SEARCH_PERSON) as searched_person,
-      -- claimed basis for search is that consent was given
         SUM(bfs.BFS_CONSENT_GIVEN) as bfs_consent_given,
-      -- claimed consentual encounter resulted in consentual search
         SUM(main.REASON_FOR_STOP) as rfs_consentual_encounter_consentual_search
       FROM
         action_taken AS at
