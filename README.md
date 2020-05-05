@@ -179,10 +179,12 @@ You can follow each step our Action takes on the [main.yml](.github/workflows/ma
 
 ### How to contribute
 
-* Suggested queries
+**Suggested queries**
+
 You can submit SQL queries as GitHub Issues (please tag them as `suggestions`) to be included as canned queries in future deployments. These canned queries are displayed in the main page and come with their individual URLs to facilitate sharing and use as APIs. At the moment, we're including all the queries necessary to recreate the facts published in the 2020 Annual Report. If you use find something intersting using this data, please submit your query so that others can use it in their work and build on it. 
 
-* Suggested supplemental tables
+**Suggested supplemental tables**
+
 There are many ways to enrich the data we already have. One example are the `_codes` tables. We extracted the code - definition tables from the README file and included them as tables in the sqlite database so that the data can be more useful "out of the box". For example, `RAE_FULL` comes with codes 1-8 for race/ethinicities. 
 
 |    Code   |       Race/Ethnicity       |
@@ -202,8 +204,10 @@ You can see it in use here: https://ripa-2018-db.datasettes.cimarron.io/ripa-201
 
 If you have any ideas for other supplemental tables that we should include please open a GitHub Issue and let us know!
 
-* Optimizing datasette / sqlite
+**Optimizing datasette / sqlite**
+
 If you know of some other ways we could optimize performance on our queries or on the database itself, please let us know. We're not SQL experts and it could help a lot of people.
 
-* Ideas, thoughts, tips, suggestions, complaints. 
+**Ideas, thoughts, tips, suggestions, complaints.**
+
 If you have any other idea or thought or question about this project please open up a GitHub Issue to start a conversation.
