@@ -62,473 +62,495 @@
     <!-- This goes before </head> closing tag, Google Analytics can be placed here -->
   </head>
   <body>
-    <h1 id="ripa-2018-datasette">RIPA-2018-datasette</h1>
-    <h2 id="table-of-contents">Table of Contents</h2>
-    <ul>
-      <li><a href="#about-ripa">About RIPA</a></li>
-      <li>
-        <a href="#about-the-project">About the project</a>
+    <main class="content">
+      <div class="container">
+        <h1 id="ripa-2018-datasette">RIPA-2018-datasette</h1>
+        <h2 id="table-of-contents">Table of Contents</h2>
         <ul>
+          <li><a href="#about-ripa">About RIPA</a></li>
           <li>
-            <a href="#about-the-data">About the data</a>
+            <a href="#about-the-project">About the project</a>
             <ul>
-              <li><a href="#supplemental-tables">Supplemental tables</a></li>
-            </ul>
-          </li>
-          <li><a href="#about-datasette">About datasette</a></li>
-          <li>
-            <a href="#project-description">Project description</a>
-            <ul>
-              <li><a href="#acquiring-the-data">Acquiring the data</a></li>
-              <li><a href="#preparing-the-data">Preparing the data</a></li>
-              <li><a href="#serving-the-data">Serving the data</a></li>
               <li>
-                <a href="#automating-everything">Automating everything</a>
+                <a href="#about-the-data">About the data</a>
+                <ul>
+                  <li>
+                    <a href="#supplemental-tables">Supplemental tables</a>
+                  </li>
+                </ul>
               </li>
+              <li><a href="#about-datasette">About datasette</a></li>
+              <li>
+                <a href="#project-description">Project description</a>
+                <ul>
+                  <li><a href="#acquiring-the-data">Acquiring the data</a></li>
+                  <li><a href="#preparing-the-data">Preparing the data</a></li>
+                  <li><a href="#serving-the-data">Serving the data</a></li>
+                  <li>
+                    <a href="#automating-everything">Automating everything</a>
+                  </li>
+                </ul>
+              </li>
+              <li><a href="#project-organization">Project organization</a></li>
             </ul>
           </li>
-          <li><a href="#project-organization">Project organization</a></li>
+          <li><a href="#how-to-contribute">How to contribute</a></li>
         </ul>
-      </li>
-      <li><a href="#how-to-contribute">How to contribute</a></li>
-    </ul>
-    <h2 id="about-ripa">About RIPA</h2>
-    <blockquote>
-      <p>
-        <em
-          >Assembly Bill 953 requires each state and local agency in California
-          that employs peace officers to annually report to the Attorney General
-          data on all stops, as defined in Government Code 12525.5(g)(2),
-          conducted by the agency&#39;s peace officers. The bill requires the
-          collected data to include specified information, including the time,
-          identity, date and location of the stop, and the reason for the stop.
-          The current dataset (RIPA Stop Data.csv) is composed of data collected
-          by the eight largest agencies in the state between July and December
-          of 2018.</em
-        >
-        <br />
-        - <a href="https://openjustice.doj.ca.gov/data">Open Justice website</a>
-      </p>
-    </blockquote>
-    <h2 id="about-the-project">About the project</h2>
-    <p>
-      The idea to explore this data came from listenting to the March 3rd, 2020
-      episode of <strong>Pod Save the People</strong> (<a
-        href="https://overcast.fm/+I9KRmEwJc/04:12"
-        >https://overcast.fm/+I9KRmEwJc/04:12</a
-      >) where they mention this article from The Appeal:
-      <a
-        href="https://theappeal.org/san-francisco-da-to-announce-sweeping-changes-on-sentencing-policy-and-police-stops/"
-        >https://theappeal.org/san-francisco-da-to-announce-sweeping-changes-on-sentencing-policy-and-police-stops/</a
-      >.
-    </p>
-    <blockquote>
-      <p>
-        <em
-          >Boudin will announce a second directive today, also reviewed by The
-          Appeal, on what are known as pretextual stops, in which an officer
-          stops someone for a minor offense or infraction, such as a traffic
-          violation, in order to conduct an unrelated search for items like guns
-          or drugs.</em
-        >
-        <br />
-        <em
-          >According to the new policy, the DA’s office will not prosecute
-          possession of contraband cases when the contraband was collected as a
-          result of an infraction-related stop, “where there is no other
-          articulable suspicion of criminal activity.” Any deviations from the
-          policy should be made in writing and require approval from the DA or a
-          chief of the criminal division.</em
-        >
-        <br />
-        <em
-          >Additionally, the ban includes cases in which a person consented to a
-          search “because of the long-standing and documented racial and ethnic
-          disparities in law enforcement requests for consent to search,”
-          according to the directive.</em
-        >
-      </p>
-    </blockquote>
-    <p>
-      In the episode Sam mentions the black and brown folks are being stopped
-      and searched at higher rates
-      <em
-        >and that a lot of these searches are what they call &#39;consent
-        searches&#39; which means that the police actually report no
-        justification at all for searching the person other than asking that
-        person if they can search them and the person allegedly giving
-        consent.</em
-      >
-    </p>
-    <p>This gross racial disparity is hearbreaking but not surprising.</p>
-    <p>
-      When I first set out to explore the dataset myself I found it
-      <em>cumbersome</em> to work with. The dataset is composed of 1.8 million
-      rows and 143 columns. It is around 650 mb which already makes it hard for
-      those are not analyzing data programmatically (with paid resources like
-      stata or sas or open-sourced ones like python and R). This information is
-      not designed to be explored easily but there are tools that can help with
-      that.
-    </p>
-    <p>
-      The goal of this project is to deploy a <code>datasette</code> instance
-      serving this data so that anyone can explore this data more easily.
-    </p>
-    <h3 id="about-the-data">About the data</h3>
-    <blockquote>
-      <p>
-        <em
-          >AB 953 tasked the Board with eliminating racial and identity
-          profiling and improving diversity and racial and identity sensitivity
-          in law enforcement by investigating and analyzing law enforcement
-          policy and data. Data statutorily required to be collected by peace
-          officers include both person-level (e.g. race/ethnicity) and
-          stop-level (e.g. time of stop) information. Reporting agencies were
-          required to begin collecting stop data in waves. Specifically, each
-          agency that employs 1,000 or more peace officers issued its first
-          round of reports on or before April 1, 2019; agencies that employ 667
-          or more but less than 1,000 peace officers shall issue its first round
-          of reports on or before April 1, 2020; agencies that employ 334 or
-          more but less than 667 peace officers shall issue its first round of
-          reports on or before April 1, 2022 and, each agency that employs one
-          or more, but less than 334 peace officers, shall issue its first round
-          of reports on or before April 1, 2023.</em
-        >
-      </p>
-    </blockquote>
-    <table>
-      <thead>
-        <tr>
-          <th style="text-align: left;"></th>
-          <th style="text-align: left;"></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td style="text-align: left;">
-            Data can be found on the California&#39;s DOJ Open Data website
-          </td>
-          <td style="text-align: left;">
+        <h2 id="about-ripa">About RIPA</h2>
+        <blockquote>
+          <p>
+            <em
+              >Assembly Bill 953 requires each state and local agency in
+              California that employs peace officers to annually report to the
+              Attorney General data on all stops, as defined in Government Code
+              12525.5(g)(2), conducted by the agency&#39;s peace officers. The
+              bill requires the collected data to include specified information,
+              including the time, identity, date and location of the stop, and
+              the reason for the stop. The current dataset (RIPA Stop Data.csv)
+              is composed of data collected by the eight largest agencies in the
+              state between July and December of 2018.</em
+            >
+            <br />
+            -
             <a href="https://openjustice.doj.ca.gov/data"
-              >https://openjustice.doj.ca.gov/data</a
+              >Open Justice website</a
             >
-          </td>
-        </tr>
-        <tr>
-          <td style="text-align: left;">Direct link to data (641.4 MB)</td>
-          <td style="text-align: left;">
-            <a
-              href="https://data-openjustice.doj.ca.gov/sites/default/files/dataset/2020-01/RIPA%20Stop%20Data%202018.csv"
-              >https://data-openjustice.doj.ca.gov/sites/default/files/dataset/2020-01/RIPA%20Stop%20Data%202018.csv</a
+          </p>
+        </blockquote>
+        <h2 id="about-the-project">About the project</h2>
+        <p>
+          The idea to explore this data came from listenting to the March 3rd,
+          2020 episode of <strong>Pod Save the People</strong> (<a
+            href="https://overcast.fm/+I9KRmEwJc/04:12"
+            >https://overcast.fm/+I9KRmEwJc/04:12</a
+          >) where they mention this article from The Appeal:
+          <a
+            href="https://theappeal.org/san-francisco-da-to-announce-sweeping-changes-on-sentencing-policy-and-police-stops/"
+            >https://theappeal.org/san-francisco-da-to-announce-sweeping-changes-on-sentencing-policy-and-police-stops/</a
+          >.
+        </p>
+        <blockquote>
+          <p>
+            <em
+              >Boudin will announce a second directive today, also reviewed by
+              The Appeal, on what are known as pretextual stops, in which an
+              officer stops someone for a minor offense or infraction, such as a
+              traffic violation, in order to conduct an unrelated search for
+              items like guns or drugs.</em
             >
-          </td>
-        </tr>
-        <tr>
-          <td style="text-align: left;">Data README</td>
-          <td style="text-align: left;">
-            <a
-              href="https://data-openjustice.doj.ca.gov/sites/default/files/dataset/2020-01/RIPA%20Dataset%20Read%20Me%2020200106.pdf"
-              >https://data-openjustice.doj.ca.gov/sites/default/files/dataset/2020-01/RIPA%20Dataset%20Read%20Me%2020200106.pdf</a
+            <br />
+            <em
+              >According to the new policy, the DA’s office will not prosecute
+              possession of contraband cases when the contraband was collected
+              as a result of an infraction-related stop, “where there is no
+              other articulable suspicion of criminal activity.” Any deviations
+              from the policy should be made in writing and require approval
+              from the DA or a chief of the criminal division.</em
             >
-          </td>
-        </tr>
-        <tr>
-          <td style="text-align: left;">2020 RIPA Board Annual Report</td>
-          <td style="text-align: left;">
-            <a
-              href="https://oag.ca.gov/sites/all/files/agweb/pdfs/ripa/ripa-board-report-2020.pdf"
-              >https://oag.ca.gov/sites/all/files/agweb/pdfs/ripa/ripa-board-report-2020.pdf</a
+            <br />
+            <em
+              >Additionally, the ban includes cases in which a person consented
+              to a search “because of the long-standing and documented racial
+              and ethnic disparities in law enforcement requests for consent to
+              search,” according to the directive.</em
             >
-          </td>
-        </tr>
-        <tr>
-          <td style="text-align: left;">RIPA stop data regulations</td>
-          <td style="text-align: left;">
-            <a
-              href="https://oag.ca.gov/sites/all/files/agweb/pdfs/ripa/stop-data-reg-final-text-110717.pdf"
-              >https://oag.ca.gov/sites/all/files/agweb/pdfs/ripa/stop-data-reg-final-text-110717.pdf</a
+          </p>
+        </blockquote>
+        <p>
+          In the episode Sam mentions the black and brown folks are being
+          stopped and searched at higher rates
+          <em
+            >and that a lot of these searches are what they call &#39;consent
+            searches&#39; which means that the police actually report no
+            justification at all for searching the person other than asking that
+            person if they can search them and the person allegedly giving
+            consent.</em
+          >
+        </p>
+        <p>This gross racial disparity is hearbreaking but not surprising.</p>
+        <p>
+          When I first set out to explore the dataset myself I found it
+          <em>cumbersome</em> to work with. The dataset is composed of 1.8
+          million rows and 143 columns. It is around 650 mb which already makes
+          it hard for those are not analyzing data programmatically (with paid
+          resources like stata or sas or open-sourced ones like python and R).
+          This information is not designed to be explored easily but there are
+          tools that can help with that.
+        </p>
+        <p>
+          The goal of this project is to deploy a
+          <code>datasette</code> instance serving this data so that anyone can
+          explore this data more easily.
+        </p>
+        <h3 id="about-the-data">About the data</h3>
+        <blockquote>
+          <p>
+            <em
+              >AB 953 tasked the Board with eliminating racial and identity
+              profiling and improving diversity and racial and identity
+              sensitivity in law enforcement by investigating and analyzing law
+              enforcement policy and data. Data statutorily required to be
+              collected by peace officers include both person-level (e.g.
+              race/ethnicity) and stop-level (e.g. time of stop) information.
+              Reporting agencies were required to begin collecting stop data in
+              waves. Specifically, each agency that employs 1,000 or more peace
+              officers issued its first round of reports on or before April 1,
+              2019; agencies that employ 667 or more but less than 1,000 peace
+              officers shall issue its first round of reports on or before April
+              1, 2020; agencies that employ 334 or more but less than 667 peace
+              officers shall issue its first round of reports on or before April
+              1, 2022 and, each agency that employs one or more, but less than
+              334 peace officers, shall issue its first round of reports on or
+              before April 1, 2023.</em
             >
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <p>
-      The data being served on this project was downloaded from the
-      <a href="https://openjustice.doj.ca.gov/data">Open Justice website</a> on
-      April 27th, 2020 at 7:30 AM.
-    </p>
-    <table>
-      <thead>
-        <tr>
-          <th style="text-align: left;">
-            Those interested in using the data should read the accompanying
-            README file and the stop data regulations (both are included in the
-            docs folder)
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td style="text-align: left;"></td>
-        </tr>
-      </tbody>
-    </table>
-    <p>
-      The dataset is 1.8 million rows and 143 columns (around 650 MB). Each stop
-      instance has an attached <code>DOJ_RECORD_ID</code> and each person
-      stopped is assigned a <code>PERSON_NUMBER</code>. It contains stops from
-      the 8 largest law enforcement agencies (LEA) in California (those
-      employing 1,000 or more peace officers - also known as Wave 1).
-    </p>
-    <p>
-      This is too large to serve as one table. It is also unnecessarily
-      cumbersome. There&#39;s a <code>datasette</code> instance serving it at
-      <a href="http://ripa-2018.herokuapp.com">http://ripa-2018.herokuapp.com</a
-      >.
-    </p>
-    <p>
-      In order to make it more accessible the dataset was &quot;broken
-      down&quot; into different tables. Columns related to one another had a
-      shared prefix (gender variables start with <code>G_</code>, race/ethnicity
-      variables start with <code>RAE_</code>) so we created tables with each
-      group of prefixes. The code used to do this can be found on the
-      <a href="src/data/break_down_database.py"
-        >src/data/break_down_database.py</a
-      >
-      script. The tables are as follows:
-    </p>
-    <table>
-      <thead>
-        <tr>
-          <th style="text-align: left;">table name</th>
-          <th style="text-align: left;">prefix</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td style="text-align: left;">race_ethnicity</td>
-          <td style="text-align: left;"><code>RAE_</code></td>
-        </tr>
-        <tr>
-          <td style="text-align: left;">gender</td>
-          <td style="text-align: left;"><code>G_</code></td>
-        </tr>
-        <tr>
-          <td style="text-align: left;">disability</td>
-          <td style="text-align: left;"><code>PD_</code></td>
-        </tr>
-        <tr>
-          <td style="text-align: left;">reason_for_stop</td>
-          <td style="text-align: left;"><code>RFS_</code></td>
-        </tr>
-        <tr>
-          <td style="text-align: left;">action_taken</td>
-          <td style="text-align: left;"><code>ADS_</code></td>
-        </tr>
-        <tr>
-          <td style="text-align: left;">basis_for_search</td>
-          <td style="text-align: left;"><code>BFS_</code></td>
-        </tr>
-        <tr>
-          <td style="text-align: left;">contraband_evidence_discovered</td>
-          <td style="text-align: left;"><code>CED_</code></td>
-        </tr>
-        <tr>
-          <td style="text-align: left;">basis_for_property_seizure</td>
-          <td style="text-align: left;"><code>BPS_</code></td>
-        </tr>
-        <tr>
-          <td style="text-align: left;">type_of_property_seized</td>
-          <td style="text-align: left;"><code>TPS_</code></td>
-        </tr>
-        <tr>
-          <td style="text-align: left;">result_of_stop</td>
-          <td style="text-align: left;"><code>ROS_</code></td>
-        </tr>
-      </tbody>
-    </table>
-    <p>
-      The &quot;broken down&quot; dataset can be found at
-      <a href="http://ripa-2018-db.herokuapp.com"
-        >http://ripa-2018-db.herokuapp.com</a
-      >.
-    </p>
-    <h4 id="supplemental-tables">Supplemental tables</h4>
-    <p>
-      In order to make this data more usable &quot;out of the box&quot;
-      we&#39;re adding supplemental tables to the datasette instance. These
-      tables should be small <em>-ish</em> in comparison. Right now these
-      include the codes and definitions for
-      <code>RAE_FULL</code> (race/ethnicity), <code>G_FULL</code> (gender),
-      <code>PD_FULL</code> (disability), <code>REASON_FOR_STOP</code>, and
-      <code>AGE_GROUPS</code>. All these tables have the suffix
-      <code>_codes</code> in their name. This information was extracted from the
-      accompanying data
-      <a href="docs/RIPA%20Dataset%20Read%20Me%2020200106.pdf">README file</a>.
-    </p>
-    <h3 id="about-datasette">About datasette</h3>
-    <p>
-      from
-      <a href="https://datasette.readthedocs.io/">datasette.readthedocs.io</a>
-    </p>
-    <blockquote>
-      <p>
-        <em>A tool for exploring and publishing data</em> <br /><br />
-        Datasette is a tool for exploring and publishing data. It helps people
-        take data of any shape or size and publish that as an interactive,
-        explorable website and accompanying API. <br /><br />
-        Datasette is aimed at data journalists, museum curators, archivists,
-        local governments and anyone else who has data that they wish to share
-        with the world. It is part of a wider ecosystem of tools and plugins
-        dedicated to making working with structured data as productive as
-        possible.
-      </p>
-    </blockquote>
-    <p>
-      <strong>datasette</strong> is the engine powering this project. In short,
-      it grabs a sqlite database and creates an
-      <em>interactive, explorable website and accompanying API</em>. To prepare
-      the data we also used <code>csvs-to-sqlite</code>, another tool from the
-      datasette ecosystem which grabs CSV files and creates sqlite databases
-      from them.
-    </p>
-    <h3 id="project-description">Project description</h3>
-    <p>
-      To learn about the motivation for this project, you can read the
-      <em><a href="#about-the-project">About the project</a></em> section.
-    </p>
-    <p>
-      This section is for a more technical description of the project. The data
-      preparation and deployment of datasette is pretty straight-forward and it
-      can be divided into three phases:
-    </p>
-    <ol>
-      <li>Aquiring the data</li>
-      <li>Preparing the data</li>
-      <li>Serving the data</li>
-    </ol>
-    <h4 id="acquiring-the-data">Acquiring the data</h4>
-    <p>
-      The data was retrieved from the Open Justice website of the California
-      Department of Justice:
-      <a href="https://openjustice.doj.ca.gov/data"
-        >https://openjustice.doj.ca.gov/data</a
-      >. The website provides a link to download the data as of May 5th, 2020.
-      To learn more about the data itself you can read the
-      <em><a href="#about-the-data">About the data</a></em> section.
-    </p>
-    <h4 id="preparing-the-data">Preparing the data</h4>
-    <p>
-      The original CSV file is over 650 MB in size so the very first step was to
-      <em>slice</em> it into 15 CSV files so that each could be uploaded to
-      GitHub with this repository. However, because the dataset is too large to
-      serve as a single table (1.8 million rows by 143 columns) it was also
-      <em>broken down</em> into smaller tables. This means we took related
-      variables (based on their suffixes) and extracted them into their own
-      tables. For example, variables related to gender like <code>G_FULL</code>,
-      <code>G_MALE</code>, <code>G_FEMALE</code>,
-      <code>G_TRANSGENDER_MAN</code>, <code>G_TRANSGENDER_WOMAN</code>,
-      <code>G_GENDER_NONCOMFORMING</code>, and <code>G_MULTIGENDER</code> were
-      extracted from the &quot;main&quot; table and were added to a
-      <strong>gender</strong> table in the database. These can be joined back to
-      the main table using the <strong>UNIQUE_ID</strong> assigned to them.
-    </p>
-    <p>
-      Each observation or row of this dataset is assigned a
-      <code>DOJ_RECORD_ID</code> and a <code>PERSON_NUMBER</code>. These are
-      unique to the stop and the person(s) stopped respectively. This means we
-      could combine them to create a UNIQUE_ID for each row which we could use
-      to join tables together. However, this ends up being a 22 character string
-      which is unnecessarily large. To facilitate things, each row is assigned a
-      numeric id starting at 1,000,000. Starting at one million is completely
-      arbitrary, we could have started at 0 but because there&#39;s 1.8 million
-      rows we made the decision to have each numeric id be seven digits. This
-      numeric <code>UNIQUE_ID</code> lets us join tables together
-      <strong>and</strong> is not a big addition to the database in terms of
-      memory.
-    </p>
-    <p>
-      Once this <code>UNIQUE_ID</code> is created we can extract columns from
-      the &quot;main&quot; table into their own tables and save those as
-      individual CSV files. We then use <code>csvs-to-sqlite</code> to create a
-      sqlite database where each CSV is a table. In this step, we also include
-      the <strong>Appendix B Table 3.csv</strong> file obtained also from the
-      DOJ&#39;s website and any other supplemental tables we might have created
-      to accompany the dataset.
-    </p>
-    <h4 id="serving-the-data">Serving the data</h4>
-    <p>
-      After preparing the data and creating the sqlite database we use
-      <strong>datasette</strong> to serve it as an interactive website and API.
-      This is as easy as running
-    </p>
-    <pre><code class="lang-shell"><span class="hljs-selector-tag">datasette</span> <span class="hljs-selector-tag">ripa-2018</span><span class="hljs-selector-class">.db</span>
+          </p>
+        </blockquote>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left;"></th>
+              <th style="text-align: left;"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="text-align: left;">
+                Data can be found on the California&#39;s DOJ Open Data website
+              </td>
+              <td style="text-align: left;">
+                <a href="https://openjustice.doj.ca.gov/data"
+                  >https://openjustice.doj.ca.gov/data</a
+                >
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align: left;">Direct link to data (641.4 MB)</td>
+              <td style="text-align: left;">
+                <a
+                  href="https://data-openjustice.doj.ca.gov/sites/default/files/dataset/2020-01/RIPA%20Stop%20Data%202018.csv"
+                  >https://data-openjustice.doj.ca.gov/sites/default/files/dataset/2020-01/RIPA%20Stop%20Data%202018.csv</a
+                >
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align: left;">Data README</td>
+              <td style="text-align: left;">
+                <a
+                  href="https://data-openjustice.doj.ca.gov/sites/default/files/dataset/2020-01/RIPA%20Dataset%20Read%20Me%2020200106.pdf"
+                  >https://data-openjustice.doj.ca.gov/sites/default/files/dataset/2020-01/RIPA%20Dataset%20Read%20Me%2020200106.pdf</a
+                >
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align: left;">2020 RIPA Board Annual Report</td>
+              <td style="text-align: left;">
+                <a
+                  href="https://oag.ca.gov/sites/all/files/agweb/pdfs/ripa/ripa-board-report-2020.pdf"
+                  >https://oag.ca.gov/sites/all/files/agweb/pdfs/ripa/ripa-board-report-2020.pdf</a
+                >
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align: left;">RIPA stop data regulations</td>
+              <td style="text-align: left;">
+                <a
+                  href="https://oag.ca.gov/sites/all/files/agweb/pdfs/ripa/stop-data-reg-final-text-110717.pdf"
+                  >https://oag.ca.gov/sites/all/files/agweb/pdfs/ripa/stop-data-reg-final-text-110717.pdf</a
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          The data being served on this project was downloaded from the
+          <a href="https://openjustice.doj.ca.gov/data">Open Justice website</a>
+          on April 27th, 2020 at 7:30 AM.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left;">
+                Those interested in using the data should read the accompanying
+                README file and the stop data regulations (both are included in
+                the docs folder)
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="text-align: left;"></td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          The dataset is 1.8 million rows and 143 columns (around 650 MB). Each
+          stop instance has an attached <code>DOJ_RECORD_ID</code> and each
+          person stopped is assigned a <code>PERSON_NUMBER</code>. It contains
+          stops from the 8 largest law enforcement agencies (LEA) in California
+          (those employing 1,000 or more peace officers - also known as Wave 1).
+        </p>
+        <p>
+          This is too large to serve as one table. It is also unnecessarily
+          cumbersome. There&#39;s a <code>datasette</code> instance serving it
+          at
+          <a href="http://ripa-2018.herokuapp.com"
+            >http://ripa-2018.herokuapp.com</a
+          >.
+        </p>
+        <p>
+          In order to make it more accessible the dataset was &quot;broken
+          down&quot; into different tables. Columns related to one another had a
+          shared prefix (gender variables start with <code>G_</code>,
+          race/ethnicity variables start with <code>RAE_</code>) so we created
+          tables with each group of prefixes. The code used to do this can be
+          found on the
+          <a href="src/data/break_down_database.py"
+            >src/data/break_down_database.py</a
+          >
+          script. The tables are as follows:
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left;">table name</th>
+              <th style="text-align: left;">prefix</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="text-align: left;">race_ethnicity</td>
+              <td style="text-align: left;"><code>RAE_</code></td>
+            </tr>
+            <tr>
+              <td style="text-align: left;">gender</td>
+              <td style="text-align: left;"><code>G_</code></td>
+            </tr>
+            <tr>
+              <td style="text-align: left;">disability</td>
+              <td style="text-align: left;"><code>PD_</code></td>
+            </tr>
+            <tr>
+              <td style="text-align: left;">reason_for_stop</td>
+              <td style="text-align: left;"><code>RFS_</code></td>
+            </tr>
+            <tr>
+              <td style="text-align: left;">action_taken</td>
+              <td style="text-align: left;"><code>ADS_</code></td>
+            </tr>
+            <tr>
+              <td style="text-align: left;">basis_for_search</td>
+              <td style="text-align: left;"><code>BFS_</code></td>
+            </tr>
+            <tr>
+              <td style="text-align: left;">contraband_evidence_discovered</td>
+              <td style="text-align: left;"><code>CED_</code></td>
+            </tr>
+            <tr>
+              <td style="text-align: left;">basis_for_property_seizure</td>
+              <td style="text-align: left;"><code>BPS_</code></td>
+            </tr>
+            <tr>
+              <td style="text-align: left;">type_of_property_seized</td>
+              <td style="text-align: left;"><code>TPS_</code></td>
+            </tr>
+            <tr>
+              <td style="text-align: left;">result_of_stop</td>
+              <td style="text-align: left;"><code>ROS_</code></td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          The &quot;broken down&quot; dataset can be found at
+          <a href="http://ripa-2018-db.herokuapp.com"
+            >http://ripa-2018-db.herokuapp.com</a
+          >.
+        </p>
+        <h4 id="supplemental-tables">Supplemental tables</h4>
+        <p>
+          In order to make this data more usable &quot;out of the box&quot;
+          we&#39;re adding supplemental tables to the datasette instance. These
+          tables should be small <em>-ish</em> in comparison. Right now these
+          include the codes and definitions for
+          <code>RAE_FULL</code> (race/ethnicity), <code>G_FULL</code> (gender),
+          <code>PD_FULL</code> (disability), <code>REASON_FOR_STOP</code>, and
+          <code>AGE_GROUPS</code>. All these tables have the suffix
+          <code>_codes</code> in their name. This information was extracted from
+          the accompanying data
+          <a href="docs/RIPA%20Dataset%20Read%20Me%2020200106.pdf"
+            >README file</a
+          >.
+        </p>
+        <h3 id="about-datasette">About datasette</h3>
+        <p>
+          from
+          <a href="https://datasette.readthedocs.io/"
+            >datasette.readthedocs.io</a
+          >
+        </p>
+        <blockquote>
+          <p>
+            <em>A tool for exploring and publishing data</em> <br /><br />
+            Datasette is a tool for exploring and publishing data. It helps
+            people take data of any shape or size and publish that as an
+            interactive, explorable website and accompanying API. <br /><br />
+            Datasette is aimed at data journalists, museum curators, archivists,
+            local governments and anyone else who has data that they wish to
+            share with the world. It is part of a wider ecosystem of tools and
+            plugins dedicated to making working with structured data as
+            productive as possible.
+          </p>
+        </blockquote>
+        <p>
+          <strong>datasette</strong> is the engine powering this project. In
+          short, it grabs a sqlite database and creates an
+          <em>interactive, explorable website and accompanying API</em>. To
+          prepare the data we also used <code>csvs-to-sqlite</code>, another
+          tool from the datasette ecosystem which grabs CSV files and creates
+          sqlite databases from them.
+        </p>
+        <h3 id="project-description">Project description</h3>
+        <p>
+          To learn about the motivation for this project, you can read the
+          <em><a href="#about-the-project">About the project</a></em> section.
+        </p>
+        <p>
+          This section is for a more technical description of the project. The
+          data preparation and deployment of datasette is pretty
+          straight-forward and it can be divided into three phases:
+        </p>
+        <ol>
+          <li>Aquiring the data</li>
+          <li>Preparing the data</li>
+          <li>Serving the data</li>
+        </ol>
+        <h4 id="acquiring-the-data">Acquiring the data</h4>
+        <p>
+          The data was retrieved from the Open Justice website of the California
+          Department of Justice:
+          <a href="https://openjustice.doj.ca.gov/data"
+            >https://openjustice.doj.ca.gov/data</a
+          >. The website provides a link to download the data as of May 5th,
+          2020. To learn more about the data itself you can read the
+          <em><a href="#about-the-data">About the data</a></em> section.
+        </p>
+        <h4 id="preparing-the-data">Preparing the data</h4>
+        <p>
+          The original CSV file is over 650 MB in size so the very first step
+          was to
+          <em>slice</em> it into 15 CSV files so that each could be uploaded to
+          GitHub with this repository. However, because the dataset is too large
+          to serve as a single table (1.8 million rows by 143 columns) it was
+          also <em>broken down</em> into smaller tables. This means we took
+          related variables (based on their suffixes) and extracted them into
+          their own tables. For example, variables related to gender like
+          <code>G_FULL</code>, <code>G_MALE</code>, <code>G_FEMALE</code>,
+          <code>G_TRANSGENDER_MAN</code>, <code>G_TRANSGENDER_WOMAN</code>,
+          <code>G_GENDER_NONCOMFORMING</code>, and
+          <code>G_MULTIGENDER</code> were extracted from the &quot;main&quot;
+          table and were added to a <strong>gender</strong> table in the
+          database. These can be joined back to the main table using the
+          <strong>UNIQUE_ID</strong> assigned to them.
+        </p>
+        <p>
+          Each observation or row of this dataset is assigned a
+          <code>DOJ_RECORD_ID</code> and a <code>PERSON_NUMBER</code>. These are
+          unique to the stop and the person(s) stopped respectively. This means
+          we could combine them to create a UNIQUE_ID for each row which we
+          could use to join tables together. However, this ends up being a 22
+          character string which is unnecessarily large. To facilitate things,
+          each row is assigned a numeric id starting at 1,000,000. Starting at
+          one million is completely arbitrary, we could have started at 0 but
+          because there&#39;s 1.8 million rows we made the decision to have each
+          numeric id be seven digits. This numeric <code>UNIQUE_ID</code> lets
+          us join tables together <strong>and</strong> is not a big addition to
+          the database in terms of memory.
+        </p>
+        <p>
+          Once this <code>UNIQUE_ID</code> is created we can extract columns
+          from the &quot;main&quot; table into their own tables and save those
+          as individual CSV files. We then use <code>csvs-to-sqlite</code> to
+          create a sqlite database where each CSV is a table. In this step, we
+          also include the <strong>Appendix B Table 3.csv</strong> file obtained
+          also from the DOJ&#39;s website and any other supplemental tables we
+          might have created to accompany the dataset.
+        </p>
+        <h4 id="serving-the-data">Serving the data</h4>
+        <p>
+          After preparing the data and creating the sqlite database we use
+          <strong>datasette</strong> to serve it as an interactive website and
+          API. This is as easy as running
+        </p>
+        <pre><code class="lang-shell"><span class="hljs-selector-tag">datasette</span> <span class="hljs-selector-tag">ripa-2018</span><span class="hljs-selector-class">.db</span>
     </code></pre>
-    <p>However, we customize our datasette instance a bit.</p>
-    <p>
-      We include a title, description, data source URL, and some extra CSS and
-      JS assets. You can explore
-      <a href="datasette/metadata.json">datasette/metadata.json</a> to find the
-      specifics.
-    </p>
-    <p>
-      We also include <em>canned queries</em>, queries included by default in
-      our instance that are displayed in the main page and come with their own
-      URL to facilitate access. These queries are included because they are
-      useful or interesting facts found in the data. Some of them are queries
-      that compute specific facts published in the 2020 Annual Report.
-    </p>
-    <p>
-      If you run into an interesting fact using this data please submit the
-      query as a GitHub Issue and tag it as a <code>suggestion</code>.
-    </p>
-    <p>
-      We also modify some templates from datasette, specifically
-      <code>base.html</code> and <code>query.html</code>. The first was modified
-      to include some metadata in the <code>&lt;head&gt;</code> (website preview
-      description and such). The second was modified to include a button below
-      the SQL code box to submit the query a user just ran as a suggestion on
-      GitHub to facilitate the sharing of these.
-    </p>
-    <p>We also change some default options for datasette:</p>
-    <ol>
-      <li><code>default_page_size:50</code></li>
-      <li><code>sql_time_limit_ms:90000</code></li>
-      <li><code>facet_time_limit_ms:10000</code></li>
-    </ol>
-    <h4 id="automating-everything">Automating everything</h4>
-    <p>
-      To facilitate the updating of this database we automate the whole process
-      using GitHub Actions.
-    </p>
-    <p>
-      In the <code>[src/data](src/data)</code> folder we include the python
-      scripts that slice the original dataset into 15 pieces, rebuild the
-      dataset to create the <code>UNIQUE_ID</code> variable and extract similar
-      variables based on their suffixes and saved those as individual CSV files.
-    </p>
-    <p>
-      In the <code>[src/tools](src/tools)</code> folder we include the script
-      that reads in the canned queries (<a href="datasette/queries.yaml"
-        >queries.yaml</a
-      >) and adds them to the
-      <a href="datasette/metadata.json">metadata.json</a> file.
-    </p>
-    <p>
-      These scripts are orchestrated using shell scripts included in the
-      <a href="datasette/">datasette</a> folder.
-    </p>
-    <p>
-      After running these scripts we have a database ready to serve and the
-      configurations we want for our datasette instance. We then deploy to
-      heroku which we can do directly from datasette.
-    </p>
-    <p>
-      You can follow each step our Action takes on the
-      <a href=".github/workflows/main.yml">main.yml</a> file.
-    </p>
-    <h3 id="project-organization">Project Organization</h3>
-    <pre><code>.
+        <p>However, we customize our datasette instance a bit.</p>
+        <p>
+          We include a title, description, data source URL, and some extra CSS
+          and JS assets. You can explore
+          <a href="datasette/metadata.json">datasette/metadata.json</a> to find
+          the specifics.
+        </p>
+        <p>
+          We also include <em>canned queries</em>, queries included by default
+          in our instance that are displayed in the main page and come with
+          their own URL to facilitate access. These queries are included because
+          they are useful or interesting facts found in the data. Some of them
+          are queries that compute specific facts published in the 2020 Annual
+          Report.
+        </p>
+        <p>
+          If you run into an interesting fact using this data please submit the
+          query as a GitHub Issue and tag it as a <code>suggestion</code>.
+        </p>
+        <p>
+          We also modify some templates from datasette, specifically
+          <code>base.html</code> and <code>query.html</code>. The first was
+          modified to include some metadata in the
+          <code>&lt;head&gt;</code> (website preview description and such). The
+          second was modified to include a button below the SQL code box to
+          submit the query a user just ran as a suggestion on GitHub to
+          facilitate the sharing of these.
+        </p>
+        <p>We also change some default options for datasette:</p>
+        <ol>
+          <li><code>default_page_size:50</code></li>
+          <li><code>sql_time_limit_ms:90000</code></li>
+          <li><code>facet_time_limit_ms:10000</code></li>
+        </ol>
+        <h4 id="automating-everything">Automating everything</h4>
+        <p>
+          To facilitate the updating of this database we automate the whole
+          process using GitHub Actions.
+        </p>
+        <p>
+          In the <code>[src/data](src/data)</code> folder we include the python
+          scripts that slice the original dataset into 15 pieces, rebuild the
+          dataset to create the <code>UNIQUE_ID</code> variable and extract
+          similar variables based on their suffixes and saved those as
+          individual CSV files.
+        </p>
+        <p>
+          In the <code>[src/tools](src/tools)</code> folder we include the
+          script that reads in the canned queries (<a
+            href="datasette/queries.yaml"
+            >queries.yaml</a
+          >) and adds them to the
+          <a href="datasette/metadata.json">metadata.json</a> file.
+        </p>
+        <p>
+          These scripts are orchestrated using shell scripts included in the
+          <a href="datasette/">datasette</a> folder.
+        </p>
+        <p>
+          After running these scripts we have a database ready to serve and the
+          configurations we want for our datasette instance. We then deploy to
+          heroku which we can do directly from datasette.
+        </p>
+        <p>
+          You can follow each step our Action takes on the
+          <a href=".github/workflows/main.yml">main.yml</a> file.
+        </p>
+        <h3 id="project-organization">Project Organization</h3>
+        <pre><code>.
     ├── <span class="hljs-type">AUTHORS</span>.md
     ├── <span class="hljs-type">LICENSE</span>
     ├── <span class="hljs-type">README</span>.md
@@ -551,93 +573,96 @@
         ├── tools             &lt;- <span class="hljs-type">Any</span> helper scripts go here
         └── visualization     &lt;- <span class="hljs-type">Scripts</span> for visualisation <span class="hljs-keyword">of</span> your results, e.g., matplotlib, ggplot2 related.
     </code></pre>
-    <h3 id="how-to-contribute">How to contribute</h3>
-    <p><strong>Suggested queries</strong></p>
-    <p>
-      You can submit SQL queries as GitHub Issues (please tag them as
-      <code>suggestions</code>) to be included as canned queries in future
-      deployments. These canned queries are displayed in the main page and come
-      with their individual URLs to facilitate sharing and use as APIs. At the
-      moment, we&#39;re including all the queries necessary to recreate the
-      facts published in the 2020 Annual Report. If you use find something
-      intersting using this data, please submit your query so that others can
-      use it in their work and build on it.
-    </p>
-    <p><strong>Suggested supplemental tables</strong></p>
-    <p>
-      There are many ways to enrich the data we already have. One example are
-      the <code>_codes</code> tables. We extracted the code - definition tables
-      from the README file and included them as tables in the sqlite database so
-      that the data can be more useful &quot;out of the box&quot;. For example,
-      <code>RAE_FULL</code> comes with codes 1-8 for race/ethinicities.
-    </p>
-    <table>
-      <thead>
-        <tr>
-          <th style="text-align: left;">Code</th>
-          <th style="text-align: left;">Race/Ethnicity</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td style="text-align: left;">1</td>
-          <td style="text-align: left;">Asian</td>
-        </tr>
-        <tr>
-          <td style="text-align: left;">2</td>
-          <td style="text-align: left;">Black/African American</td>
-        </tr>
-        <tr>
-          <td style="text-align: left;">3</td>
-          <td style="text-align: left;">Hispanic/Latino</td>
-        </tr>
-        <tr>
-          <td style="text-align: left;">4</td>
-          <td style="text-align: left;">Middle Eastern/South Asian</td>
-        </tr>
-        <tr>
-          <td style="text-align: left;">5</td>
-          <td style="text-align: left;">Native American</td>
-        </tr>
-        <tr>
-          <td style="text-align: left;">6</td>
-          <td style="text-align: left;">Pacific Islander</td>
-        </tr>
-        <tr>
-          <td style="text-align: left;">7</td>
-          <td style="text-align: left;">White</td>
-        </tr>
-        <tr>
-          <td style="text-align: left;">8</td>
-          <td style="text-align: left;">Multiracial</td>
-        </tr>
-      </tbody>
-    </table>
-    <p>
-      This is a tiny table of just 8 rows which can provide massive help for
-      anyone working with the data.
-    </p>
-    <p>
-      You can see it in use here:
-      <a
-        href="https://ripa-2018-db.datasettes.cimarron.io/ripa-2018-db/race-ethnicity-by-reason-for-stop"
-        >https://ripa-2018-db.datasettes.cimarron.io/ripa-2018-db/race-ethnicity-by-reason-for-stop</a
-      >
-    </p>
-    <p>
-      If you have any ideas for other supplemental tables that we should include
-      please open a GitHub Issue and let us know!
-    </p>
-    <p><strong>Optimizing datasette / sqlite</strong></p>
-    <p>
-      If you know of some other ways we could optimize performance on our
-      queries or on the database itself, please let us know. We&#39;re not SQL
-      experts and it could help a lot of people.
-    </p>
-    <p><strong>Ideas, thoughts, tips, suggestions, complaints.</strong></p>
-    <p>
-      If you have any other idea or thought or question about this project
-      please open up a GitHub Issue to start a conversation.
-    </p>
+        <h3 id="how-to-contribute">How to contribute</h3>
+        <p><strong>Suggested queries</strong></p>
+        <p>
+          You can submit SQL queries as GitHub Issues (please tag them as
+          <code>suggestions</code>) to be included as canned queries in future
+          deployments. These canned queries are displayed in the main page and
+          come with their individual URLs to facilitate sharing and use as APIs.
+          At the moment, we&#39;re including all the queries necessary to
+          recreate the facts published in the 2020 Annual Report. If you use
+          find something intersting using this data, please submit your query so
+          that others can use it in their work and build on it.
+        </p>
+        <p><strong>Suggested supplemental tables</strong></p>
+        <p>
+          There are many ways to enrich the data we already have. One example
+          are the <code>_codes</code> tables. We extracted the code - definition
+          tables from the README file and included them as tables in the sqlite
+          database so that the data can be more useful &quot;out of the
+          box&quot;. For example, <code>RAE_FULL</code> comes with codes 1-8 for
+          race/ethinicities.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left;">Code</th>
+              <th style="text-align: left;">Race/Ethnicity</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="text-align: left;">1</td>
+              <td style="text-align: left;">Asian</td>
+            </tr>
+            <tr>
+              <td style="text-align: left;">2</td>
+              <td style="text-align: left;">Black/African American</td>
+            </tr>
+            <tr>
+              <td style="text-align: left;">3</td>
+              <td style="text-align: left;">Hispanic/Latino</td>
+            </tr>
+            <tr>
+              <td style="text-align: left;">4</td>
+              <td style="text-align: left;">Middle Eastern/South Asian</td>
+            </tr>
+            <tr>
+              <td style="text-align: left;">5</td>
+              <td style="text-align: left;">Native American</td>
+            </tr>
+            <tr>
+              <td style="text-align: left;">6</td>
+              <td style="text-align: left;">Pacific Islander</td>
+            </tr>
+            <tr>
+              <td style="text-align: left;">7</td>
+              <td style="text-align: left;">White</td>
+            </tr>
+            <tr>
+              <td style="text-align: left;">8</td>
+              <td style="text-align: left;">Multiracial</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          This is a tiny table of just 8 rows which can provide massive help for
+          anyone working with the data.
+        </p>
+        <p>
+          You can see it in use here:
+          <a
+            href="https://ripa-2018-db.datasettes.cimarron.io/ripa-2018-db/race-ethnicity-by-reason-for-stop"
+            >https://ripa-2018-db.datasettes.cimarron.io/ripa-2018-db/race-ethnicity-by-reason-for-stop</a
+          >
+        </p>
+        <p>
+          If you have any ideas for other supplemental tables that we should
+          include please open a GitHub Issue and let us know!
+        </p>
+        <p><strong>Optimizing datasette / sqlite</strong></p>
+        <p>
+          If you know of some other ways we could optimize performance on our
+          queries or on the database itself, please let us know. We&#39;re not
+          SQL experts and it could help a lot of people.
+        </p>
+        <p><strong>Ideas, thoughts, tips, suggestions, complaints.</strong></p>
+        <p>
+          If you have any other idea or thought or question about this project
+          please open up a GitHub Issue to start a conversation.
+        </p>
+      </div>
+    </main>
   </body>
 </html>
