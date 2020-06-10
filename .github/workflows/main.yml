@@ -27,7 +27,7 @@ jobs:
     - name: Add canned queries and tables info to metadata
       run: |
         python src/tools/add_metadata.py
-    - name: Login to Heroku
+    - name: Login and deploy to Heroku
       env:
         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       run: heroku container:login && heroku plugins:install heroku-builds && sh datasette/heroku_deploy.sh
