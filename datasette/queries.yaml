@@ -65,3 +65,25 @@ consent-by-race-ethnicity:
         rae.RAE_FULL
   title: "Variables related to consent in searches"
   description_html: "According to RIPA stop data regulations: <br> <b>Consensual search</b> is a search that occurs when a person gives a peace officer consent or permission to search the person or the person’s property. Consent can be given in writing or verbally, or may be implied by conduct. <br> <b>Consensual encounter resulting in a search</b>: A consensual encounter is an interaction in which the officer does not exert any authority over, or use any force on, a person, and the person is free to leave. The officer shall only select this data value if a consensual encounter results in a search, regardless of whether the resulting search is consensual."
+
+reason-for-stop-by-race-by-agency:
+  sql: SELECT
+        rae_codes.RACE_ETHNICITY,
+        rfs_codes.REASON_FOR_STOP,
+        COUNT(*) as N
+      FROM
+        aa_main_table as main
+      JOIN race_ethnicity as rae
+        ON rae.UNIQUE_ID = main.UNIQUE_ID
+      JOIN race_ethnicity_codes as rae_codes
+        ON rae.RAE_FULL = rae_codes.CODE
+      JOIN rfs_codes
+        on main.REASON_FOR_STOP = rfs_codes.CODE
+      WHERE
+        "AGENCY_NAME" = :agency
+      GROUP BY
+        main.REASON_FOR_STOP, rae.RAE_FULL
+      ORDER BY
+        RACE_ETHNICITY, N DESC
+  title: "Reason for stop by race/ethinicty by agency"
+  description_html: "<p><strong>AGENCY_NAME OPTIONS:</strong></p><ul><li>CHP-HQ A/C, STAFF</li><li>LAPD</li><li>LOS ANGELES CO SD</li><li>SAN DIEGO PD</li><li>SAN BERNARDINO CO SO</li><li>SAN FRANCISCO PD - DOC</li><li>RIVERSIDE CO SO</li><li>SAN DIEGO CO SO</li></ul>"
