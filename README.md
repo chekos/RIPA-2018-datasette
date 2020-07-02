@@ -5,6 +5,9 @@
 
 # RIPA-2018-datasette
 
+## News
+_How to make open data more accessible with datasette_ on TowardsDataScience: <https://towardsdatascience.com/making-open-data-more-accessible-with-datasette-480a1de5e919>
+
 ## Table of Contents
 
 - [About RIPA](#about-ripa)
