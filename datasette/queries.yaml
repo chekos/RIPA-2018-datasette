@@ -77,7 +77,7 @@ reason-for-stop-by-race-by-agency:
         ON rae.UNIQUE_ID = main.UNIQUE_ID
       JOIN race_ethnicity_codes as rae_codes
         ON rae.RAE_FULL = rae_codes.CODE
-      JOIN rfs_codes
+      JOIN reason_for_stop_codes as rfs_codes
         on main.REASON_FOR_STOP = rfs_codes.CODE
       WHERE
         "AGENCY_NAME" = :agency
