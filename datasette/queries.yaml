@@ -87,3 +87,40 @@ reason-for-stop-by-race-by-agency:
         RACE_ETHNICITY, N DESC
   title: "Reason for stop by race/ethinicty by agency"
   description_html: '<p>AGENCY_NAME OPTIONS:</p><ul><li><a href="?agency=CHP-HQ+A%2FC%2C+STAFF">CHP-HQ A/C, STAFF</a></li><li><a href="?agency=LAPD">LAPD</a></li><li><a href="?agency=LOS+ANGELES+CO+SD">LOS ANGELES CO SD</a></li><li><a href="?agency=SAN+DIEGO+PD">SAN DIEGO PD</a></li><li><a href="?agency=SAN+BERNARDINO+CO+SO">SAN BERNARDINO CO SO</a></li><li><a href="?agency=SAN+FRANCISCO+PD+-+DOC">SAN FRANCISCO PD - DOC</a></li><li><a href="?agency=RIVERSIDE+CO+SO">RIVERSIDE CO SO</a></li><li><a href="?agency=SAN+DIEGO+CO+SO">SAN DIEGO CO SO</a></li></ul>'
+
+veil-of-darkness-analysis-by-agency:
+  sql: SELECT
+          IN_TWILIGHT,
+          RACE_ETHNICITY,
+          COUNT(*) as N
+        FROM
+          (
+            SELECT
+              main.UNIQUE_ID,
+              main.AGENCY_NAME,
+              main.DATE_OF_STOP,
+              main.CLOSEST_CITY,
+              racen_codes.RACE_ETHNICITY,
+              TIME_OF_STOP,
+              twilight.CTWILIGHT_BEGIN as twilight_begin,
+              twilight.CTWILIGHT_END as twilight_end,
+              CASE
+                WHEN TIME_OF_STOP > twilight.CTWILIGHT_BEGIN
+                AND TIME_OF_STOP < twilight.CTWILIGHT_END THEN "Within civil twilight"
+                ELSE "in the dark..."
+              END as IN_TWILIGHT
+            FROM
+              aa_main_table as main
+              INNER JOIN civil_twilight_hours as twilight ON twilight.DATE_OF_STOP = main.DATE_OF_STOP
+              AND twilight.CLOSEST_CITY = main.CLOSEST_CITY
+              INNER JOIN race_ethnicity as racen ON racen.UNIQUE_ID = main.UNIQUE_ID
+              INNER JOIN race_ethnicity_codes as racen_codes ON racen_codes.CODE = racen.RAE_FULL
+          )
+        WHERE
+          AGENCY_NAME = :agency
+        GROUP BY
+          AGENCY_NAME,
+          RACE_ETHNICITY,
+          IN_TWILIGHT
+  title: "Veil of darkness (VOD) analysis by agency"
+  description_html: '<p>AGENCY_NAME OPTIONS:</p><ul><li><a href="?agency=CHP-HQ+A%2FC%2C+STAFF">CHP-HQ A/C, STAFF</a></li><li><a href="?agency=LAPD">LAPD</a></li><li><a href="?agency=LOS+ANGELES+CO+SD">LOS ANGELES CO SD</a></li><li><a href="?agency=SAN+DIEGO+PD">SAN DIEGO PD</a></li><li><a href="?agency=SAN+BERNARDINO+CO+SO">SAN BERNARDINO CO SO</a></li><li><a href="?agency=SAN+FRANCISCO+PD+-+DOC">SAN FRANCISCO PD - DOC</a></li><li><a href="?agency=RIVERSIDE+CO+SO">RIVERSIDE CO SO</a></li><li><a href="?agency=SAN+DIEGO+CO+SO">SAN DIEGO CO SO</a></li></ul>'
